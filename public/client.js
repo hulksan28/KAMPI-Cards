@@ -5,6 +5,7 @@ const lobbyDiv = document.getElementById('lobby');
 const gameDiv = document.getElementById('game-table');
 const joinBtn = document.getElementById('join-btn');
 const startBtn = document.getElementById('start-btn');
+const rulesBtn = document.getElementById('rules-btn'); // NEW
 const usernameInput = document.getElementById('username');
 const roomIdInput = document.getElementById('room-id');
 const playersContainer = document.getElementById('players-container');
@@ -20,12 +21,15 @@ const dashboardList = document.getElementById('dashboard-list');
 const betAmountInput = document.getElementById('bet-amount');
 const betBtn = document.getElementById('bet-btn');
 const foldBtn = document.getElementById('fold-btn');
-const showBtn = document.getElementById('show-btn');
+const showBtn = document.getElementById('show-btn'); // Old show button, likely hide or reuse
+const displayCardsBtn = document.getElementById('display-cards-btn'); // NEW
 const seeCardsBtn = document.getElementById('see-cards-btn');
 const crossBtn = document.getElementById('cross-btn');
 const distributeBtn = document.getElementById('distribute-btn');
 
 const distributeModal = document.getElementById('distribute-modal');
+const rulesModal = document.getElementById('rules-modal'); // NEW
+const rulesClose = document.getElementById('rules-close'); // NEW
 
 let myId = null;
 let currentRoomId = null;
@@ -39,7 +43,8 @@ let gameState = {
     isSeenMode: false,
     minBlindChoice: 1,
     lastBetAmount: 0,
-    canCross: false
+    canCross: false,
+    isHeadsUp: false
 };
 
 joinBtn.addEventListener('click', () => {
@@ -57,17 +62,19 @@ startBtn.addEventListener('click', () => {
     if (amIHost) socket.emit('start_game', currentRoomId);
 });
 
+// Rules Modal
+rulesBtn.addEventListener('click', () => { rulesModal.classList.remove('hidden'); });
+rulesClose.addEventListener('click', () => { rulesModal.classList.add('hidden'); });
+
+
 socket.on('connect', () => { myId = socket.id; });
 
 socket.on('player_joined', (data) => {
     let players = data.players || data;
     let newcomer = data.newPlayer || "A player";
-
     renderPlayers(players);
     renderDashboard(players);
-
     if (newcomer) log(`${newcomer} has joined.`);
-
     if (players.length > 0 && players[0].id === myId) {
         amIHost = true;
         startBtn.style.display = 'inline-block';
@@ -115,6 +122,7 @@ socket.on('game_started', (data) => {
     seeCardsBtn.classList.remove('hidden');
     crossBtn.classList.add('hidden');
     distributeBtn.classList.add('hidden');
+    displayCardsBtn.classList.add('hidden');
 
     betAmountInput.value = data.minBlindChoice;
 
@@ -141,7 +149,8 @@ socket.on('your_hand', (hand) => {
 socket.on('turn_change', (data) => {
     gameState.isSeenMode = data.isSeenMode;
     gameState.lastBetAmount = data.lastBetAmount;
-    gameState.canCross = data.canCross; // Logic from server
+    gameState.canCross = data.canCross;
+    gameState.isHeadsUp = data.isHeadsUp;
 
     updatePot(data.pot);
 
@@ -216,7 +225,6 @@ document.getElementById('reject-distribute').addEventListener('click', () => {
 
 betBtn.addEventListener('click', () => {
     const val = parseInt(betAmountInput.value);
-    // Min validation for Seen
     if (myState.isSeen && val < gameState.lastBetAmount) {
         return alert(`Seen players must bet at least ₹${gameState.lastBetAmount}.`);
     }
@@ -227,8 +235,9 @@ foldBtn.addEventListener('click', () => {
     socket.emit('player_action', { roomId: currentRoomId, action: { type: 'fold' } });
 });
 
-showBtn.addEventListener('click', () => {
-    socket.emit('player_action', { roomId: currentRoomId, action: { type: 'show' } });
+displayCardsBtn.addEventListener('click', () => {
+    // Heads Up Show Logic
+    socket.emit('player_action', { roomId: currentRoomId, action: { type: 'display_cards' } });
 });
 
 seeCardsBtn.addEventListener('click', () => {
@@ -236,8 +245,6 @@ seeCardsBtn.addEventListener('click', () => {
 });
 
 crossBtn.addEventListener('click', () => {
-    // Cross always pays Blind price. User doesn't type amount. Server knows.
-    // Or we validation:
     socket.emit('player_action', { roomId: currentRoomId, action: { type: 'cross', amount: gameState.minBlindChoice } });
 });
 
@@ -256,14 +263,11 @@ function handleTurn(activeId) {
         if (myState.isSeen) {
             betBtn.innerText = "SEEN";
             betBtn.disabled = false;
-            // Min bet suggestion
             const min = Math.max(gameState.lastBetAmount, gameState.minBlindChoice * 2);
             if (betAmountInput.value < min) betAmountInput.value = min;
         } else {
-            // Blind
             betBtn.innerText = "BLIND";
             if (gameState.isSeenMode) {
-                // Cannot play blind if table is seen
                 betBtn.disabled = true;
                 betBtn.innerText = "LOCKED";
             } else {
@@ -271,16 +275,20 @@ function handleTurn(activeId) {
             }
         }
 
-        // Cross Visibility
-        if (gameState.canCross) {
-            crossBtn.classList.remove('hidden');
+        // Specific Heads Up Controls
+        if (gameState.isHeadsUp) {
+            crossBtn.classList.add('hidden'); // No cross in heads up (ruled out by auto-see)
+            distributeBtn.classList.add('hidden'); // Optional: Distribute or Display? User said Distribute is for 2 players. Retaining both?
+            // "Display your cards" option enabled only when 2 players left
+            displayCardsBtn.classList.remove('hidden');
+            distributeBtn.classList.remove('hidden'); // Keep distribute as optional split
         } else {
-            crossBtn.classList.add('hidden');
-        }
+            displayCardsBtn.classList.add('hidden');
+            distributeBtn.classList.add('hidden');
 
-        const activeCount = document.querySelectorAll('.player-seat:not(.folded)').length + 1;
-        if (activeCount === 2) distributeBtn.classList.remove('hidden');
-        else distributeBtn.classList.add('hidden');
+            if (gameState.canCross) crossBtn.classList.remove('hidden');
+            else crossBtn.classList.add('hidden');
+        }
 
     } else {
         controlsPanel.classList.add('disabled');

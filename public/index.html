@@ -7,10 +7,14 @@
     <title>KAMPI - The Royale</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=2.1">
+    <link rel="stylesheet" href="style.css?v=3.0">
 </head>
 
 <body>
+
+    <!-- Top Left Rules Button -->
+    <button id="rules-btn"
+        style="position:absolute; top:15px; left:15px; z-index:1000; background:#34495e; color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer;">Rules</button>
 
     <!-- Lobby Screen -->
     <div id="lobby" class="screen">
@@ -37,7 +41,7 @@
             </div>
 
             <div class="table-center-decoration">
-                <div id="central-pot">Pot: $0</div>
+                <div id="central-pot">Pot: ₹0</div>
             </div>
 
             <div id="game-log"></div>
@@ -45,7 +49,7 @@
             <!-- My Area -->
             <div id="my-area">
                 <div id="my-stats">
-                    <span id="my-balance">Bal: $1000</span> | <span id="my-status">Blind</span>
+                    <span id="my-balance">Bal: ₹100</span> | <span id="my-status">Blind</span>
                 </div>
 
                 <div id="my-hand">
@@ -64,7 +68,11 @@
                         <button id="see-cards-btn" class="action-btn secondary">See My Cards</button>
                         <button id="cross-btn" class="action-btn secondary hidden">Cross</button>
                         <button id="fold-btn" class="action-btn fold">Fold</button>
-                        <button id="show-btn" class="action-btn show">Show</button>
+                        <button id="show-btn" class="action-btn show hidden">Show</button>
+
+                        <!-- New Heads Up Button -->
+                        <button id="display-cards-btn" class="action-btn show hidden"
+                            style="background:#e67e22;">Display Your Cards</button>
                     </div>
 
                     <button id="distribute-btn" class="action-btn distribute hidden">Distribute Pot</button>
@@ -80,7 +88,36 @@
             </ul>
         </div>
 
-        <!-- Modal -->
+        <!-- Rules Modal -->
+        <div id="rules-modal" class="modal hidden">
+            <div class="modal-content" style="text-align:left; max-width:600px; max-height:80vh; overflow-y:auto;">
+                <h2 style="text-align:center; color:#ffd700;">KAMPI Rules</h2>
+                <hr style="border:1px solid #444; margin: 10px 0;">
+                <p><strong>1. Balance:</strong> Everyone starts with ₹100.</p>
+                <p><strong>2. Betting:</strong></p>
+                <ul>
+                    <li><strong>Blind:</strong> Play without seeing cards. (₹1 or ₹2)</li>
+                    <li><strong>Seen:</strong> Play after seeing cards. Must bet 2x Blind amount.</li>
+                    <li><strong>Cross:</strong> Switch from Blind to Seen by matching current bet. (One time only).</li>
+                    <li><strong>Limits:</strong> If a player is SEEN, the Blind option is LOCKED for others.</li>
+                </ul>
+                <p><strong>3. Three-Round Limit:</strong> If 3 rounds pass with everyone SEEN and no drops, a Forced
+                    Showdown occurs.</p>
+                <p><strong>4. Heads-Up (2 Players):</strong></p>
+                <ul>
+                    <li>No force showdown. Game continues until explicit Showdown.</li>
+                    <li><strong>Display Cards:</strong> Pay current bet to force Showdown.</li>
+                    <li><strong>Auto-Seen:</strong> If opponent is Seen, you cannot play Blind/Cross. Your cards are
+                        auto-revealed.</li>
+                </ul>
+                <div style="text-align:center; margin-top:20px;">
+                    <button id="rules-close"
+                        style="padding:10px 20px; background:#e74c3c; border:none; color:white; border-radius:5px; cursor:pointer;">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Distribute Modal -->
         <div id="distribute-modal" class="modal hidden">
             <div class="modal-content">
                 <p id="distribute-msg">Player X proposes to Distribute the Pot. Agree?</p>
@@ -94,7 +131,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="client.js?v=2.1"></script>
+    <script src="client.js?v=3.0"></script>
 </body>
 
 </html>
