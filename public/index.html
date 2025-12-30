@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAMPI - The Royale</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=2.1">
+</head>
+
+<body>
+
+    <!-- Lobby Screen -->
+    <div id="lobby" class="screen">
+        <div class="lobby-card">
+            <h1>KAMPI</h1>
+            <p style="margin-top:-20px; color:#ddd; margin-bottom:20px;">The Ultimate Royal Card Game</p>
+            <input type="text" id="username" placeholder="Enter Nickname" maxlength="10">
+            <input type="text" id="room-id" placeholder="Room ID (Optional)">
+            <button id="join-btn">Join Table</button>
+        </div>
+    </div>
+
+    <!-- Game Table Screen -->
+    <div id="game-table" class="screen hidden">
+        <!-- Main Area -->
+        <div id="main-play-area">
+            <div class="header">
+                <div id="header-info">Wait for players...</div>
+                <button id="start-btn" style="display:none;" disabled>Start Game</button>
+            </div>
+
+            <div id="players-container">
+                <!-- Other players -->
+            </div>
+
+            <div class="table-center-decoration">
+                <div id="central-pot">Pot: $0</div>
+            </div>
+
+            <div id="game-log"></div>
+
+            <!-- My Area -->
+            <div id="my-area">
+                <div id="my-stats">
+                    <span id="my-balance">Bal: $1000</span> | <span id="my-status">Blind</span>
+                </div>
+
+                <div id="my-hand">
+                    <div class="card-placeholder">?</div>
+                    <div class="card-placeholder">?</div>
+                    <div class="card-placeholder">?</div>
+                </div>
+
+                <div id="controls-panel">
+                    <div class="bet-controls">
+                        <input type="number" id="bet-amount" value="1" min="1" max="1000">
+                        <button id="bet-btn" class="action-btn bet">Bet</button>
+                    </div>
+
+                    <div class="action-row">
+                        <button id="see-cards-btn" class="action-btn secondary">See My Cards</button>
+                        <button id="cross-btn" class="action-btn secondary hidden">Cross</button>
+                        <button id="fold-btn" class="action-btn fold">Fold</button>
+                        <button id="show-btn" class="action-btn show">Show</button>
+                    </div>
+
+                    <button id="distribute-btn" class="action-btn distribute hidden">Distribute Pot</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Side Panel -->
+        <div id="dashboard-panel">
+            <h3>Players</h3>
+            <ul id="dashboard-list">
+                <!-- Dynamic list -->
+            </ul>
+        </div>
+
+        <!-- Modal -->
+        <div id="distribute-modal" class="modal hidden">
+            <div class="modal-content">
+                <p id="distribute-msg">Player X proposes to Distribute the Pot. Agree?</p>
+                <div class="modal-actions">
+                    <button id="accept-distribute">Accept</button>
+                    <button id="reject-distribute">Reject</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js?v=2.1"></script>
+</body>
+
+</html>
