@@ -483,38 +483,125 @@ body {
         flex-direction: column;
     }
 
+    #stats-btn {
+        display: block !important;
+        /* Show toggle on mobile */
+    }
+
+    /* Collapsible Dashboard */
     #dashboard-panel {
-        width: 100%;
-        height: 80px;
-        flex-direction: row;
-        flex-wrap: wrap;
-        order: -1;
-        border-left: none;
-        border-bottom: 1px solid #444;
-    }
-
-    #dashboard-panel h3 {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        width: 200px;
+        height: auto;
+        max-height: 50vh;
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid #444;
+        z-index: 999;
         display: none;
+        /* Hidden by default, toggled via JS */
+        border-radius: 8px 0 0 8px;
     }
 
-    #dashboard-list {
+    #dashboard-panel.show-stats {
         display: flex;
-        flex-wrap: wrap;
+    }
+
+    /* Player Container - Better Grid */
+    #players-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        /* 2 columns */
+        gap: 10px;
+        align-content: start;
+        padding-top: 60px;
+        /* Space for header */
+        padding-bottom: 20px;
+        overflow-y: auto;
+        max-height: 45vh;
+        /* Limit height to save space for user area */
+    }
+
+    .player-seat {
+        margin: 0 auto;
+        transform: scale(0.9);
+        /* Slightly smaller seats */
+    }
+
+    /* Decoration & Pot */
+    .table-center-decoration {
+        top: 25%;
+        /* Move pot higher */
+        left: 50%;
+        width: 100%;
+    }
+
+    #central-pot {
+        font-size: 1.5rem;
+        padding: 5px 15px;
+    }
+
+    /* Game Log - Move to top, transparent */
+    #game-log {
+        top: 60px;
+        /* Below header */
+        left: 10px;
+        width: 180px;
+        height: 100px;
+        bottom: auto;
+        /* Unset bottom */
+        font-size: 0.75rem;
+        background: rgba(0, 0, 0, 0.4);
+        border: none;
+        pointer-events: none;
+        z-index: 50;
+    }
+
+    /* My Area */
+    #my-area {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        padding: 10px 5px;
+        border-top: 2px solid #ffd700;
+        z-index: 100;
+    }
+
+    #my-hand {
+        margin-bottom: 5px;
+        height: 90px;
+    }
+
+    .card,
+    .card-placeholder {
+        width: 55px;
+        height: 85px;
+        font-size: 1.2rem;
+    }
+
+    /* Controls - Touch Friendly */
+    #controls-panel {
         gap: 5px;
     }
 
-    #dashboard-list li {
-        padding: 4px 8px;
-        font-size: 0.75rem;
+    .action-row {
+        gap: 8px;
     }
 
-    #game-log {
-        width: 200px;
-        height: 120px;
-        bottom: 200px;
+    .action-btn {
+        padding: 12px 10px;
+        /* Larger hit area */
+        font-size: 0.85rem;
+        flex: 1;
+        /* Stretch buttons */
+        min-width: auto;
     }
 
-    .table-center-decoration {
-        top: 35%;
+    #bet-amount {
+        width: 70px;
+        font-size: 1rem;
     }
 }
