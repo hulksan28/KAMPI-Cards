@@ -144,6 +144,8 @@ socket.on('your_hand', (hand) => {
     hand.forEach(card => myHandDiv.appendChild(createCardElement(card)));
     seeCardsBtn.classList.add('hidden');
     log("Cards revealed.");
+    // Refresh controls (e.g. update Blind -> Seen button label)
+    if (currentTurnId) handleTurn(currentTurnId);
 });
 
 socket.on('turn_change', (data) => {
@@ -254,7 +256,10 @@ distributeBtn.addEventListener('click', () => {
 
 
 // Helpers
+let currentTurnId = null;
+
 function handleTurn(activeId) {
+    currentTurnId = activeId;
     if (activeId === myId) {
         controlsPanel.classList.remove('disabled');
         log("👉 YOUR TURN");
@@ -277,11 +282,13 @@ function handleTurn(activeId) {
 
         // Specific Heads Up Controls
         if (gameState.isHeadsUp) {
-            crossBtn.classList.add('hidden'); // No cross in heads up (ruled out by auto-see)
-            distributeBtn.classList.add('hidden'); // Optional: Distribute or Display? User said Distribute is for 2 players. Retaining both?
+            crossBtn.classList.add('hidden');
+            distributeBtn.classList.add('hidden');
+
             // "Display your cards" option enabled only when 2 players left
+            displayCardsBtn.innerText = `Showdown (₹${gameState.lastBetAmount})`; // Update Label with Cost
             displayCardsBtn.classList.remove('hidden');
-            distributeBtn.classList.remove('hidden'); // Keep distribute as optional split
+            distributeBtn.classList.remove('hidden');
         } else {
             displayCardsBtn.classList.add('hidden');
             distributeBtn.classList.add('hidden');
