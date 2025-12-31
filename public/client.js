@@ -66,6 +66,18 @@ startBtn.addEventListener('click', () => {
 rulesBtn.addEventListener('click', () => { rulesModal.classList.remove('hidden'); });
 rulesClose.addEventListener('click', () => { rulesModal.classList.add('hidden'); });
 
+// Mobile Stats Toggle
+const statsBtn = document.getElementById('stats-btn');
+const dashboardPanel = document.getElementById('dashboard-panel');
+statsBtn.addEventListener('click', () => {
+    dashboardPanel.style.display = (dashboardPanel.style.display === 'flex') ? 'none' : 'flex';
+    // Logic for class toggle if preferred, but direct style works with the mobile CSS override logic
+    // Actually, let's use the class we defined in CSS: .show-stats
+    // dashboardPanel.classList.toggle('show-stats'); 
+    // Wait, the CSS uses display:none by default on mobile. 
+    // Let's use simple style toggling to force it.
+});
+
 
 socket.on('connect', () => { myId = socket.id; });
 
